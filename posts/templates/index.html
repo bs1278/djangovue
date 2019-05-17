@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Django Vue JS Crud Application</title>   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulmaswatch/0.4.2/flatly/bulmaswatch.min.css'>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <style>
+    .backcard{
+     overflow-x:hidden
+	height:auto;
+	background: white;
+	border-radius: 10px;
+	line-height: 1.5em;
+	box-shadow: 0px 15px 20px 15px rgba(0, 0, 0, 0), 0 5px 2px rgba(0, 0, 0, 0.06);
+        }
+        #sticky {
+          padding: 0.5ex;
+          width: 600px;
+          background-color: #333;
+          color: #fff;
+          font-size: 2em;
+          border-radius: 0.5ex;
+        }
+        
+        #sticky.stick {
+          position: fixed;
+          top: 0;
+          z-index: 10000;
+          border-radius: 0 0 0.5em 0.5em;
+        }
+        .wrapper {
+          width: 100%;
+          max-width: 1140px;
+          margin: 0 auto;
+        }
+        
+        .timelineBox {
+          width: 350px;
+          height: auto;
+          overflow: hidden;
+          margin: 5rem auto;
+          background: #fff;
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.06), 0 1px 0 rgba(0, 0, 0, 0.02);
+        }
+        
+        .timelineHeader {
+          padding: 3rem 2rem;
+          background: #e91e63;
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.5), 0 4px 0 rgba(0, 0, 0, 0.02);
+          position: relative;
+          z-index: 3;
+        }
+        .timelineHeader h3 {
+          font-family: inherit;
+          font-size: 2rem;
+          letter-spacing: 0.1rem;
+          color: #fff;
+          font-weight: normal;
+          margin: 0;
+        }
+        .timelineHeader h3 + span {
+          font-size: 1.2rem;
+          letter-spacing: 0.2rem;
+          font-weight: normal;
+          color: #fff;
+        }
+        
+        .postBody {
+          max-height: 400px;
+          overflow-x: hidden;
+          overflow-y: auto;
+        }
+        .postBody .timeline {
+          padding: 3rem 2rem !important;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+          position: relative;
+          z-index: 2;
+        }
+        .postBody .timeline:before {
+          content: '';
+          position: absolute;
+          width: 4px;
+          background: #fff;
+          top: 0;
+          right: auto;
+          left: 25px;
+          height: 100%;
+          z-index: -1;
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.085), 0 1px 0 rgba(0, 0, 0, 0.02);
+        }
+        .postBody .timeline li {
+          display: flex;
+          align-items: flex-start;
+          justify-content: flex-start;
+          margin-bottom: 2rem;
+          position: relative;
+        }
+        .postBody .timeline .timelineDot {
+          height: 1.5rem;
+          width: 1.5rem;
+          background: #fff;
+          border-radius: 2rem;
+          flex: 0 0 1.5rem;
+          margin-right: auto;
+          margin-top: 6px;
+          box-shadow: 0 0 8px #56cb5f;
+        }
+        .postBody .timeline .timelineDot::after {
+          content: '';
+          position: absolute;
+          top: 9px;
+          left: 3px;
+          height: 9px;
+          width: 9px;
+          background: #56cb5f;
+          border-radius: 50%;
+        }
+        .postBody .timeline .timelineDate {
+          font-size: 1.2rem;
+          flex: 0 0 80px;
+          padding: 0.2rem;
+        }
+        .postBody .timeline .timelineWork {
+          font-family: inherit;
+          font-size: 1.4rem;
+          margin-left: auto;
+          flex: 0 0 170px;
+        }
+        .postBody .timeline .timelineWork small {
+          display: block;
+          color: #bdbdbd;
+        }
+        
+        .postBody::-webkit-scrollbar-track {
+          -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+          background-color: #F5F5F5;
+        }
+        
+        .postBody::-webkit-scrollbar {
+          width: 6px;
+          background-color: #F5F5F5;
+        }
+        
+        .postBody::-webkit-scrollbar-thumb {
+          background-color: #e91e63;
+        }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+        <<div class="container">
+          <div class="row">
+            <div id="sticky-anchor"></div>
+           <div id="sticky" class="col-md-4 offset-md-4 backcard">
+                 <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" v-model="newPost.title">
+                  </div>
+                  <div class="form-group">
+                    <label for="text">Body</label>
+                    <input type="text" class="form-control" id="text" v-model="newPost.body">
+                  </div>
+                  <button type="submit" class="btn btn-default" @click="addPost();">Submit</button>   
+            </div>
+            <div class="col-md-4 offset-md-4 backcard">
+                  <div class="wrapper" v-for="post in posts">
+                    <div class="timelineBox">
+                      <div class="timelineHeader">
+                        <h3>${post.title}</h3>
+                        <span><i class="far fa-edit"></i><i class="far fa-trash-alt" @click="deletePost(post.id);"></i></span>
+                      </div>
+                      <div class="postBody">
+                        <ul class="timeline">
+                          <li>
+                            <div class="timelineDot"></div>
+                            <div class="timelineDate">${post.created_at}</div>
+                            <div class="timelineWork">${post.body}</div>
+                          </li>
+                          <ul>
+                      </div>
+                    </div>
+                  </div>
+
+            </div>
+    
+          </div>
+        </div>
+    </div>
+ <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+  <script src='http://unpkg.com/vue'></script>
+<script src='http://unpkg.com/vuex'></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+    <script>
+    
+    </script>
+    <script>
+        Vue.http.headers.common['X-CSRFToken'] = "{{ csrf_token }}";
+
+    var crudApp = new Vue({
+        el: "#app",
+        delimiters:['${','}'],
+        data(){
+            return{                
+                posts:[],
+                newPost:{'title':null, 'body':null},
+                editingPost: {}      
+            }
+        },
+        mounted:function(){
+            this.getPosts();
+        },
+   
+        methods:{
+            getPosts:function(){
+                console.log("gi")
+             this.$http.get(`/api/v1/posts/`)
+                .then((response)=>{
+                    this.posts = response.data;                    
+                }).catch((err)=>{
+                    console.log("error")                
+                })         
+            },
+            addPost: function(){
+                console.log("hii")
+                this.$http.post(`/api/v1/posts/`, this.newPost)
+                    .then((response)=>{
+                        this.getPosts();   
+                        this.newPost=''                     
+                    }).catch((err)=>{
+                        console.log("error")                    
+                    })            
+            },
+            deletePost:function(id){
+                this.$http.delete(`/api/v1/posts/${id}/`)
+                    .then((response)=>{
+                        this.getPosts();                        
+                    }).catch((err)=>{
+                        console.log("error")                
+                    })            
+            }        
+        }
+            
+    })
+    </script>
+  </body>
+</html>
